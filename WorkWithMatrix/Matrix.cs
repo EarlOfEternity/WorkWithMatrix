@@ -4,9 +4,9 @@ namespace WorkWithMatrix
 {
     public class Matrix<T> where T : INumber<T>
     {
-        private int _Rows;
-        private int _Columns;
-        private T[,] _Array;
+        private readonly int _Rows;
+        private readonly int _Columns;
+        private readonly T[,] _Array;
 
         public int Rows { get => _Rows; }
         public int Columns { get => _Columns; }
@@ -36,7 +36,7 @@ namespace WorkWithMatrix
         {
             if (leftMatrix._Rows == rightMatrix._Rows && leftMatrix._Columns == rightMatrix._Columns)
             {
-                Matrix<T> result = new Matrix<T>(leftMatrix._Rows, leftMatrix._Columns);
+                Matrix<T> result = new(leftMatrix._Rows, leftMatrix._Columns);
                 for (int r = 0; r < result._Rows; r++)
                     for (int c = 0; c < result._Columns; c++)
                         result._Array[r, c] = leftMatrix._Array[r, c] + rightMatrix._Array[r, c];
@@ -49,7 +49,7 @@ namespace WorkWithMatrix
         {
             if (leftMatrix._Rows == rightMatrix._Rows && leftMatrix._Columns == rightMatrix._Columns)
             {
-                Matrix<T> result = new Matrix<T>(leftMatrix._Rows, leftMatrix._Columns);
+                Matrix<T> result = new(leftMatrix._Rows, leftMatrix._Columns);
                 for (int r = 0; r < result._Rows; r++)
                     for (int c = 0; c < result._Columns; c++)
                         result._Array[r, c] = leftMatrix._Array[r, c] - rightMatrix._Array[r, c];
@@ -60,7 +60,7 @@ namespace WorkWithMatrix
         }
         public static Matrix<T> operator *(T multiplier, Matrix<T> matix)
         {
-            Matrix<T> result = new Matrix<T>(matix._Rows, matix._Columns);
+            Matrix<T> result = new(matix._Rows, matix._Columns);
             for (int r = 0; r < result._Rows; r++)
                 for (int c = 0; c < result._Columns; c++)
                     result._Array[r, c] = matix._Array[r, c] * multiplier;
@@ -68,7 +68,7 @@ namespace WorkWithMatrix
         }
         public static Matrix<T> operator *(Matrix<T> matix, T multiplier)
         {
-            Matrix<T> result = new Matrix<T>(matix._Rows, matix._Columns);
+            Matrix<T> result = new(matix._Rows, matix._Columns);
             for (int r = 0; r < result._Rows; r++)
                 for (int c = 0; c < result._Columns; c++)
                     result._Array[r, c] = matix._Array[r, c] * multiplier;
@@ -78,7 +78,7 @@ namespace WorkWithMatrix
         {
             if (leftMatrix._Columns == rightMatrix._Rows)
             {
-                Matrix<T> result = new Matrix<T>(leftMatrix._Rows, rightMatrix._Columns);
+                Matrix<T> result = new(leftMatrix._Rows, rightMatrix._Columns);
                 for (int rR = 0; rR < result._Rows; rR++)
                     for (int rC = 0; rC < result._Columns; rC++)
                         for (int l = 0; l < leftMatrix._Rows; l++)
@@ -95,7 +95,7 @@ namespace WorkWithMatrix
         }
         public Matrix<T> GetTransposed()
         {
-            Matrix<T> result = new Matrix<T>(_Columns, _Rows);
+            Matrix<T> result = new (_Columns, _Rows);
             for (int r = 0; r < result._Rows; r++)
                 for (int c = 0; c < result._Columns; c++)
                     result._Array[r, c] = _Array[c, r];
@@ -105,7 +105,7 @@ namespace WorkWithMatrix
         {
             if (_Rows == _Columns)
             {
-                Matrix<T> result = new Matrix<T>(_Array);
+                Matrix<T> result = new(_Array);
                 for (int s = 0; s < exponent; s++)
                     result = this * result;
                 return result;
@@ -117,7 +117,7 @@ namespace WorkWithMatrix
         {
             if (_Rows > 2 && _Columns > 2)
             {
-                Matrix<T> result = new Matrix<T>(_Rows - 1, _Columns - 1);
+                Matrix<T> result = new (_Rows - 1, _Columns - 1);
                 for (int r = 0; r < result._Rows; r++)
                 {
                     int rI = r < row ? r : r + 1;
@@ -149,7 +149,7 @@ namespace WorkWithMatrix
                     return _Array[0, 0] * _Array[1, 1] * _Array[2, 2] + _Array[0, 1] * _Array[1, 2] * _Array[2, 0] + _Array[0, 2] * _Array[1, 0] * _Array[2, 1] - _Array[0, 2] * _Array[1, 1] * _Array[2, 0] - _Array[0, 0] * _Array[1, 2] * _Array[2, 1] - _Array[0, 1] * _Array[1, 0] * _Array[2, 2];
                 else
                 {
-                    Matrix<T> tMatrix = new Matrix<T>(_Array);
+                    Matrix<T> tMatrix = new(_Array);
                     T result = T.Zero;
                     for (int r = 0; r < tMatrix._Rows; r++)
                         result += _Array[r, 0] * GetAlgebraicComplement(r, 0);
@@ -161,7 +161,7 @@ namespace WorkWithMatrix
         }
         public Matrix<T> GetAdjointMatrix()
         {
-            Matrix<T> result = new Matrix<T>(_Rows, _Columns);
+            Matrix<T> result = new(_Rows, _Columns);
             for (int r = 0; r < _Rows; r++)
                 for (int c = 0; c < _Columns; c++)
                     result._Array[r, c] = GetAlgebraicComplement(r, c);
@@ -169,20 +169,18 @@ namespace WorkWithMatrix
         }
         public bool IsSquare()
         {
-            return (_Rows == _Columns) ? true : false;
+            return _Rows == _Columns;
         }
         public void RowsSwap(int r1, int r2)
         {
             for (int c = 0; c < _Columns; c++)
             {
-                T value = _Array[r2, c];
-                _Array[r2, c] = _Array[r1, c];
-                _Array[r1, c] = value;
+                (_Array[r1, c], _Array[r2, c]) = (_Array[r2, c], _Array[r1, c]);
             }
         }
         public int GetRang()
         {
-            Matrix<T> tMatrix = new Matrix<T>(_Array);
+            Matrix<T> tMatrix = new(_Array);
             for (int c = 0; c < tMatrix._Columns; c++)
                 if (tMatrix._Rows > c)
                 {
